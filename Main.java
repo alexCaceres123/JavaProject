@@ -3,8 +3,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Magatzem magatzem = new Magatzem();
-        Botiga botiga = new Botiga(magatzem);
+        Conexio conexio = new Conexio();
+        Magatzem magatzem = new Magatzem(conexio);
+        Botiga botiga = new Botiga(conexio, magatzem);
+        
         boolean endWhile = true;
 
         while(endWhile){
@@ -39,7 +41,6 @@ public class Main {
                 endWhile = false;
             }
         }
-        
         sc.close();
     }
 }

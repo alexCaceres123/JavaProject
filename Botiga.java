@@ -2,28 +2,13 @@ import java.util.Scanner;
 import java.sql.*;  
 
 public class Botiga {
+    private Conexio conexio;
     private Magatzem magatzem;
     static Scanner sc = new Scanner(System.in);
-    private static String HOST = "127.0.0.1";
-    private static int PORT = 3306;
-    private static String USERNAME = "root";
-    private static String PASSWORD = "";
-    private static String DATABASE = "botigaproject";
-    private Statement stmt;
-    private static Connection conn;
 
-    public Botiga(Magatzem magatzem){
+    public Botiga(Conexio conexio, Magatzem magatzem){
+        this.conexio = conexio;
         this.magatzem = magatzem;
-
-        try{  
-            Class.forName("com.mysql.jdbc.Driver");  
-            conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE, USERNAME, PASSWORD);  
-            stmt = conn.createStatement();  
-
-        }catch(Exception e){ 
-            System.out.println(e);
-        };     
-           
     }
 
     //GETTERS
@@ -40,8 +25,7 @@ public class Botiga {
             System.out.println("4 VEURE STOCK SOFTWARE:");
             System.out.println("5 ORDINADORS VENGUTS:");
             System.out.println("6 CLIENTS DE LA BOTIGA:");
-            System.out.println("7 ARREGLAR ORDINADOR:\n");
-
+            System.out.println("7 CLIENTS DE LA BOTIGA:\n");
             System.out.print("OPCIÓ: ");  
             res = sc.nextLine();
   
@@ -54,7 +38,7 @@ public class Botiga {
 
     public void getAllClients(){
         try{
-            ResultSet rs = this.execQuery("select * from clients;");
+            ResultSet rs = this.conexio.execQuery("select * from clients;");
             System.out.println("");
             while(rs.next()){
                 int id = rs.getInt("id");
@@ -67,7 +51,7 @@ public class Botiga {
 
     public void getAllComandes(){
         try{
-            ResultSet rs = this.execQuery("select * from comandes;");
+            ResultSet rs = this.conexio.execQuery("select * from comandes;");
             
             System.out.println("");
             while(rs.next()){
@@ -84,7 +68,7 @@ public class Botiga {
         int count = 0;            
 
         try{
-            ResultSet rs = this.execQuery("select * from comandes");
+            ResultSet rs = this.conexio.execQuery("select * from comandes");
             while(rs.next()){
                 count++;
             }
@@ -97,7 +81,7 @@ public class Botiga {
         int count = 1;            
 
         try{
-            ResultSet rs = this.execQuery("select * from clients");
+            ResultSet rs = this.conexio.execQuery("select * from clients");
             while(rs.next()){
                 count++;
             }
@@ -107,15 +91,15 @@ public class Botiga {
     }
 
     public void getAllStock(){
-        this.magatzem.getAllStock(this.stmt);
+        this.magatzem.getAllStock();
     }
 
     public void getHardwareStock(){
-        this.magatzem.getHardwareStock(this.stmt);
+        this.magatzem.getHardwareStock();
     }
 
     public void getSoftwareStock(){
-        this.magatzem.getSoftwareStock(this.stmt);
+        this.magatzem.getSoftwareStock();
     }
 
     //FUNCIONALITATS
@@ -180,7 +164,7 @@ public class Botiga {
     public void creacioComanda(Ordinador ordinador, Client client){
         System.out.println("\nComanda");
         Comanda comanda = new Comanda(this.getCountAllComandes(), client.getNom(), ordinador.getId(), ordinador.getPreutotal());
-        comanda.addComandaBDD(stmt);
+        comanda.addComandaBDD(this.conexio);
     }
 
     public Ordinador createAndAddOrdinador(){
@@ -190,27 +174,27 @@ public class Botiga {
         while(endWhile){
             System.out.println("\nCREACIÓ DE L'ORDINADOR (ESPECIFICA LES ID)");
             System.out.println("--------------------------------------------");
-            this.magatzem.getTargetes(stmt);
+            this.magatzem.getTargetes();
             System.out.print("\nTARGETA GRÀFICA: ");
             String targeta = sc.nextLine();
     
-            this.magatzem.getProcessadors(stmt);
+            this.magatzem.getProcessadors();
             System.out.print("\nPROCESSADOR: ");
             String processador = sc.nextLine();
     
-            this.magatzem.getDiscs(stmt);
+            this.magatzem.getDiscs();
             System.out.print("\nDISC: ");
             String disc = sc.nextLine();
     
-            this.magatzem.getRAMs(stmt);
+            this.magatzem.getRAMs();
             System.out.print("\nRAM: ");
             String ram = sc.nextLine();
     
-            this.magatzem.getSoftwareStock(stmt);
+            this.magatzem.getSoftwareStock();
             System.out.print("\nSISTEMA: ");
             String sistema = sc.nextLine();
 
-            newOrdinador = this.magatzem.valHardwareAndSoftware(targeta, processador, disc, ram, sistema, stmt);
+            newOrdinador = this.magatzem.valHardwareAndSoftware(targeta, processador, disc, ram, sistema);
             if(!newOrdinador.getId().equals("")){
                 endWhile = false;
             }else{
@@ -234,7 +218,7 @@ public class Botiga {
         Client newClient = new Client("", "", "", "");
 
         try{
-            ResultSet rs = this.execQuery("select * from clients;");
+            ResultSet rs = this.conexio.execQuery("select * from clients;");
 
             while(rs.next()){
                 String name = rs.getString("nom");
@@ -263,31 +247,11 @@ public class Botiga {
         String contrasenyaClient = sc.nextLine();
         String idClient = this.getCountAllClients();
         Client newClient = new Client(idClient, nomClient, CognomClient, contrasenyaClient);
-        newClient.addClientBDD(stmt);    
+        newClient.addClientBDD(this.conexio);    
         return newClient;
     }
 
     public void arreglarOrdinador(){
-        System.out.println("Arregaldr Ordinador");
+
     }
-
-    //QUERY FUNCTIONS
-
-    public ResultSet execQuery(String query){
-        try{  
-            ResultSet rs = stmt.executeQuery(query);  
-            return rs;
-        }catch(Exception e){ 
-            System.out.println(e);
-        };
-        return null;
-    };
-
-    public void close(){
-        try{  
-            conn.close(); 
-        }catch(Exception e){ 
-            System.out.println(e);
-        };
-    };
 }

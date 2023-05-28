@@ -1,5 +1,3 @@
-import java.sql.*;  
-
 public class Ordinador {
     private String id;
     private String nom;
@@ -87,18 +85,10 @@ public class Ordinador {
         this.software = software;
     }
 
-    public void addOrdinadorBDD(Statement stmt){
+    public void addOrdinadorBDD(Conexio conexio){
         try{
             String query = String.format("INSERT INTO ordinadors (id, nom, preutotal, grafica, ram, processador, disc, software)VALUES ('%s', '%s', %d, '%s', '%s', '%s', '%s', '%s');", this.id, this.nom, this.preutotal, this.grafica, this.ram, this.processador, this.disc, this.software);
-            this.execInsert(query, stmt);
+            conexio.execInsert(query);
         }catch(Exception e){};
     }
-
-    public void execInsert(String query, Statement stmt){
-        try{  
-            stmt.executeUpdate(query);  
-        }catch(Exception e){ 
-            System.out.println(e);
-        };
-    };
 }

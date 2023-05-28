@@ -1,5 +1,3 @@
-import java.sql.*;
-
 public class Client {
     private String id;
     private String nom;
@@ -39,19 +37,11 @@ public class Client {
         return this.contrasenya;
     }
 
-    public void addClientBDD(Statement stmt){
+    public void addClientBDD(Conexio conexio){
         try{
             String query = String.format("INSERT INTO clients (id, nom, cognom, contrasenya) VALUES ('%s', '%s', '%s', '%s');", this.id, this.nom, this.cognom, this.contrasenya);
-            this.execInsert(query, stmt);
+            conexio.execInsert(query);
         }catch(Exception e){};
     }
-
-    public void execInsert(String query, Statement stmt){
-        try{  
-            stmt.executeUpdate(query);  
-        }catch(Exception e){ 
-            System.out.println(e);
-        };
-    };
 }
 

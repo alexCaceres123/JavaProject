@@ -1,21 +1,26 @@
 import java.sql.*;
 
 public class Magatzem {
+    private Conexio conexio;
+
+    public Magatzem(Conexio conexio){
+        this.conexio = conexio;
+    }
 
     //GETTERS
 
-    public void getAllStock(Statement stmt){
+    public void getAllStock(){
         System.out.println("\nHARDWARE");
         System.out.println("-----------------");
-        this.getHardwareStock(stmt);
+        this.getHardwareStock();
         System.out.println("\nSOFTWARE");
         System.out.println("-----------------");
-        this.getSoftwareStock(stmt);
+        this.getSoftwareStock();
     }
 
-    public void getHardwareStock(Statement stmt){
+    public void getHardwareStock(){
         try{
-            ResultSet rs = this.execQuery("select * from hardware;", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from hardware;");
             
             System.out.println("");
             while(rs.next()){
@@ -27,9 +32,9 @@ public class Magatzem {
         }catch(Exception e){};
     }
 
-    public void getSoftwareStock(Statement stmt){
+    public void getSoftwareStock(){
         try{
-            ResultSet rs = this.execQuery("select * from software;", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from software;");
 
             System.out.println("");
             while(rs.next()){
@@ -41,9 +46,9 @@ public class Magatzem {
         }catch(Exception e){};
     }
 
-    public void getTargetes(Statement stmt){
+    public void getTargetes(){
         try{
-            ResultSet rs = this.execQuery("select * from hardware where tipus = 'targeta';", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from hardware where tipus = 'targeta';");
             System.out.println("");
             while(rs.next()){
                 String id = rs.getString("id");
@@ -54,9 +59,9 @@ public class Magatzem {
         }catch(Exception e){};
     }
 
-    public void getRAMs(Statement stmt){
+    public void getRAMs(){
         try{
-            ResultSet rs = this.execQuery("select * from hardware where tipus = 'ram';", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from hardware where tipus = 'ram';");
             System.out.println("");
             while(rs.next()){
                 String id = rs.getString("id");
@@ -67,9 +72,9 @@ public class Magatzem {
         }catch(Exception e){};
     }
 
-    public void getDiscs(Statement stmt){
+    public void getDiscs(){
         try{
-            ResultSet rs = this.execQuery("select * from hardware where tipus = 'disc';", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from hardware where tipus = 'disc';");
             
             System.out.println("");
             while(rs.next()){
@@ -81,9 +86,9 @@ public class Magatzem {
         }catch(Exception e){};
     }
 
-    public void getProcessadors(Statement stmt){
+    public void getProcessadors(){
         try{
-            ResultSet rs = this.execQuery("select * from hardware where tipus = 'processador';", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from hardware where tipus = 'processador';");
             
             System.out.println("");
             while(rs.next()){
@@ -95,11 +100,11 @@ public class Magatzem {
         }catch(Exception e){};
     }
 
-    public int getCountAllOrdinadors(Statement stmt){
+    public int getCountAllOrdinadors(){
         int count = 1;            
 
         try{
-            ResultSet rs = this.execQuery("select * from ordinadors", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from ordinadors");
             while(rs.next()){
                 count++;
             }
@@ -111,7 +116,7 @@ public class Magatzem {
 
     //FUNCIONALITATS
 
-    public Ordinador valHardwareAndSoftware(String targeta, String processador, String disc, String ram, String sistema, Statement stmt){
+    public Ordinador valHardwareAndSoftware(String targeta, String processador, String disc, String ram, String sistema){
         boolean valTargeta = false;
         boolean valProcessador = false;
         boolean valDisc = false;
@@ -129,7 +134,7 @@ public class Magatzem {
         
 
         try{
-            ResultSet rs = this.execQuery("select * from hardware where tipus = 'targeta';", stmt);
+            ResultSet rs = this.conexio.execQuery("select * from hardware where tipus = 'targeta';");
             
             while(rs.next()){
                 String id = rs.getString("id");
@@ -143,7 +148,7 @@ public class Magatzem {
                 }
             }
 
-            rs = this.execQuery("select * from hardware where tipus = 'processador';", stmt);
+            rs = this.conexio.execQuery("select * from hardware where tipus = 'processador';");
 
             while(rs.next()){
                 String id = rs.getString("id");
@@ -157,7 +162,7 @@ public class Magatzem {
                 }
             }
 
-            rs = this.execQuery("select * from hardware where tipus = 'disc';", stmt);
+            rs = this.conexio.execQuery("select * from hardware where tipus = 'disc';");
 
             while(rs.next()){
                 String id = rs.getString("id");
@@ -171,7 +176,7 @@ public class Magatzem {
                 }
             }
 
-            rs = this.execQuery("select * from hardware where tipus = 'ram';", stmt);
+            rs = this.conexio.execQuery("select * from hardware where tipus = 'ram';");
 
             while(rs.next()){
                 String id = rs.getString("id");
@@ -185,7 +190,7 @@ public class Magatzem {
                 }
             }
 
-            rs = this.execQuery("select * from software;", stmt);
+            rs = this.conexio.execQuery("select * from software;");
 
             while(rs.next()){
                 String id = rs.getString("id");
@@ -201,35 +206,22 @@ public class Magatzem {
         }catch(Exception e){};
         
         if(valTargeta && valProcessador && valRAM && valDisc && valSistema){
-            newOrdinador = this.setOrdinador(nomTargeta, nomDisc, nomProcessador, nomSistema, nomRam, preuTotal, stmt);
+            newOrdinador = this.setOrdinador(nomTargeta, nomDisc, nomProcessador, nomSistema, nomRam, preuTotal);
             return newOrdinador;
         }else{
             return newOrdinador;
         }
     }
 
-    public Ordinador setOrdinador(String nomTargeta, String nomDisc, String nomProcessador, String nomSistema, String nomRam, int PreuTotal, Statement stmt){
-        String idOrdinador = Integer.toString(this.getCountAllOrdinadors(stmt));
+    public Ordinador setOrdinador(String nomTargeta, String nomDisc, String nomProcessador, String nomSistema, String nomRam, int PreuTotal){
+        String idOrdinador = Integer.toString(this.getCountAllOrdinadors());
         String nomOrdinador = String.format("Ordinador %s", idOrdinador);
         Ordinador newOrdinador = new Ordinador(idOrdinador, nomOrdinador, PreuTotal, nomTargeta, nomRam, nomProcessador, nomDisc, nomSistema);
-        newOrdinador.addOrdinadorBDD(stmt);
+        newOrdinador.addOrdinadorBDD(this.conexio);
 
         System.out.println("\nAQUEST ES EL TEU ORDINADOR");
         System.out.println("-------------------------------");
         System.out.println(newOrdinador.getNom() + " " + newOrdinador.getPreutotal() + " " + newOrdinador.getGrafica() + " " + newOrdinador.getRam() + " " + newOrdinador.getProcessador() + " " + newOrdinador.getDisc() + " " + newOrdinador.getSoftware());
         return newOrdinador;
     }
-
-
-    //QUERY FUNCTIONS
-
-    public ResultSet execQuery(String query, Statement stmt){
-        try{  
-            ResultSet rs = stmt.executeQuery(query);  
-            return rs;
-        }catch(Exception e){ 
-            System.out.println(e);
-        };
-        return null;
-    };
 }

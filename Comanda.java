@@ -1,11 +1,9 @@
-import java.sql.*;
-
 public class Comanda {
     private String id;
     private String nomclient;
     private String nomordinador;
     private int preu;
-    
+
     public Comanda(String id, String nomclient, String nomordinador, int preu) {
         this.id = id;
         this.nomclient = nomclient;
@@ -47,18 +45,10 @@ public class Comanda {
         this.preu = preu;
     }
 
-    public void addComandaBDD(Statement stmt){
+    public void addComandaBDD(Conexio conexio){
         try{
             String query = String.format("INSERT INTO comandes (id, nomclient, nomordinador, preu) VALUES ('%s', '%s', 'Ordinador %s', '%s');", this.id, this.nomclient, this.nomordinador, Integer.toString(this.preu));
-            this.execInsert(query, stmt);
+            conexio.execInsert(query);
         }catch(Exception e){};
     }
-
-    public void execInsert(String query, Statement stmt){
-        try{  
-            stmt.executeUpdate(query);  
-        }catch(Exception e){ 
-            System.out.println(e);
-        };
-    };
 }
