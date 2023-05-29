@@ -224,4 +224,24 @@ public class Magatzem {
         System.out.println(newOrdinador.getNom() + " " + newOrdinador.getPreutotal() + " " + newOrdinador.getGrafica() + " " + newOrdinador.getRam() + " " + newOrdinador.getProcessador() + " " + newOrdinador.getDisc() + " " + newOrdinador.getSoftware());
         return newOrdinador;
     }
+
+    public void getOrdinadors(){
+        try{
+            ResultSet rs = this.conexio.execQuery("select * from ordinadors;");
+            System.out.println("");
+            while(rs.next()){
+                int id = rs.getInt("id");
+                String name = rs.getString("nom");
+                String grafica = rs.getString("grafica");
+                String ram = rs.getString("ram");
+                String processador = rs.getString("processador");
+                String disc = rs.getString("disc");
+                String software = rs.getString("software");
+                System.out.println("ID: " + id + " NAME: " + name + " Grafica: " + grafica + " Ram: " + ram + " Processador: " + processador + " Disc: " + disc + " Software: " + software);
+            }
+        }catch(Exception e){
+
+        }
+        
+    }
 }

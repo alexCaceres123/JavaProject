@@ -1,20 +1,32 @@
 public class Comanda {
     private String id;
     private String nomclient;
+    private String cognomClient;
+    private String idClient;
     private String nomordinador;
     private int preu;
 
-    public Comanda(String id, String nomclient, String nomordinador, int preu) {
+    public Comanda(String id, String nomclient, String cognomClient, String idClient, String nomordinador, int preu) {
         this.id = id;
         this.nomclient = nomclient;
         this.nomordinador = nomordinador;
         this.preu = preu;
+        this.cognomClient = cognomClient;
+        this.idClient = idClient;
     }
     
     // Getters y setters
     
     public String getId() {
         return id;
+    }
+
+    public String getcognomClient() {
+        return cognomClient;
+    }
+
+    public String getIdClient() {
+        return idClient;
     }
     
     public void setId(String id) {
@@ -47,7 +59,7 @@ public class Comanda {
 
     public void addComandaBDD(Conexio conexio){
         try{
-            String query = String.format("INSERT INTO comandes (id, nomclient, nomordinador, preu) VALUES ('%s', '%s', 'Ordinador %s', '%s');", this.id, this.nomclient, this.nomordinador, Integer.toString(this.preu));
+            String query = String.format("INSERT INTO comandes (id, nomclient, cognom, idClient, nomordinador, preu) VALUES ('%s', '%s', '%s', '%s', 'Ordinador %s', '%s');", this.id, this.nomclient, this.cognomClient, this.idClient, this.nomordinador, Integer.toString(this.preu));
             conexio.execInsert(query);
         }catch(Exception e){};
     }

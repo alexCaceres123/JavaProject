@@ -18,10 +18,7 @@ public class Conexio {
 
         }catch(Exception e){ 
             System.out.println(e);
-        };     
-
-        System.out.print(this.stmt +  "\n" + this.conn);
-           
+        };                
     }
 
     public ResultSet execQuery(String query){
@@ -41,6 +38,13 @@ public class Conexio {
             System.out.println(e);
         };
     };
+
+    public void execUpdate(String query){
+        try{
+            this.stmt.executeUpdate(query);   
+        }catch(Exception e){
+        }
+    }
 
     public void close(){
         try{  
